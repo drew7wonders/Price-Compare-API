@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+.head {
+    background-color: #d2cc19;
+    text-align: center;
+}
+
+h1 {
+    color: #3e3333;
+    font-size: 5em;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#btn {
+    background-color: #4CAF50; /* Green background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding for better spacing */
+    font-size: 16px; /* Font size */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Cursor style on hover */
+    transition: background-color 0.3s; /* Smooth background color transition on hover */
+}
+
+#btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.contain {
+    display: flex;
+    flex-direction: column;
+
+    margin: 20px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #1976D2; /* Change border color on focus */
+}
+
+.compare {
+    margin: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f2f2f2;
+}
+
+/* Add styles for specific cells or rows if needed */
+#amaznameinp, #flipnameinp, #snapnameinp {
+    font-weight: bold;
+}
+
+#amazinp, #flipinp, #snapinp {
+    color: green; /* Change the color based on your preference */
+}
+
