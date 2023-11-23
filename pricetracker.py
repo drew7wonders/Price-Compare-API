@@ -58,7 +58,7 @@ def scrape_flipkart(url):
                 else:
                     return {"error": "Product price not found on the page.", "url": url}
 
-        return {"error": "Product is currently unavailable. Please try again later.", "url": url}
+        return {"error": "Product is currently unavailable. Please try again later.", "name": product_name}
 
     except requests.exceptions.RequestException as e:
         return {"error": f"Request Error: {str(e)}"}
