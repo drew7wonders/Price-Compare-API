@@ -43,7 +43,7 @@ def scrape_flipkart(url):
         ch = 100
         response = requests.get(url, headers=headers)
 
-        if response.status_code == 200:
+        if response.status_code == 500:
             soup = BeautifulSoup(response.content, 'html.parser')
             ch = 101
             product_name = soup.find('span', class_='B_NuCI')
@@ -76,7 +76,7 @@ def scrape_amazon(url):
 
         response = requests.get(url, headers=headers)
 
-        if response.status_code == 503:
+        if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
 
             product_name = soup.find('span', class_='a-size-large product-title-word-break')
