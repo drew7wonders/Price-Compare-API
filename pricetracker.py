@@ -45,7 +45,7 @@ class Scraper:
                 soup = BeautifulSoup(response.content, 'html.parser')
 
                 product_name = soup.find('span', class_='B_NuCI')
-                price_element = soup.find('div', class_='_30jeq3 _16Jk6d')
+                price_element = soup.find('div', class_='_1vC4OE _3qQ9m1')
 
                 if price_element:
                     price = price_element.get_text(strip=True)
@@ -66,7 +66,7 @@ class Scraper:
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, 'html.parser')
 
-                product_name = soup.find('span', class_='a-size-large product-title-word-break')
+                product_name = soup.find('span', class_='a-size-large')
                 price_element = soup.find('span', class_='a-price-whole')
 
                 if price_element:
