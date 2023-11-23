@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from bs4 import BeautifulSoup
 import requests
 from flask_cors import CORS
+from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -28,7 +29,7 @@ class Scraper:
                     price = price_element.get_text(strip=True)
                     return {"product_name": product_name.text.strip(), "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later.", "url":self.url, "code":response.status_code}
+            return {"error": "Product is currently unavailable. Please try again later."}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
@@ -50,7 +51,7 @@ class Scraper:
                     price = price_element.get_text(strip=True)
                     return {"product_name": product_name.text.strip(), "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later.", "url":self.url, "code":response.status_code}
+            return {"error": "Product is currently unavailable. Please try again later."}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
@@ -72,13 +73,26 @@ class Scraper:
                     price = price_element.get_text(strip=True)
                     return {"product_name": product_name.text.strip(), "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later.", "url":self.url, "code":response.status_code}
+            return {"error": "Product is currently unavailable. Please try again later."}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
 
         except Exception as e:
             return {"error": f"Error: {str(e)}"}
+
+def scrape_with_timeout(scraper, timeout=30):
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        future_snap = executor.submit(scraper.scrape_snapdeal)
+        future_flip = executor.submit(scraper.scrape_flipkart)
+        future_amaz = executor.submit(scraper.scrape_amazon)
+
+        # Wait for all futures to complete
+        result_snap = future_snap.result(timeout=timeout)
+        result_flip = future_flip.result(timeout=timeout)
+        result_amaz = future_amaz.result(timeout=timeout)
+
+        return result_snap, result_flip, result_amaz
 
 @app.route('/scrape', methods=['POST'])
 def handle_scraping():
@@ -89,16 +103,10 @@ def handle_scraping():
     url_amaz = data.get('amazon_url', '')
 
     scraper_snapdeal = Scraper(url_snap)
-    result_snap = scraper_snapdeal.scrape_snapdeal()
-
-    scraper_flipkart = Scraper(url_flip)
-    result_flip = scraper_flipkart.scrape_flipkart()
-
-    scraper_amazon = Scraper(url_amaz)
-    result_amaz = scraper_amazon.scrape_amazon()
+    result_snap, result_flip, result_amaz = scrape_with_timeout(scraper_snapdeal)
 
     ret = {"snap": result_snap, "flip": result_flip, "amaz": result_amaz}
     return jsonify(ret)
 
 if __name__ == "__main__":
-    app.run(debug=True, threaded=True)
+    app.run()
