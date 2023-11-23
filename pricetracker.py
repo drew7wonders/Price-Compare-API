@@ -26,7 +26,7 @@ def scrape_snapdeal(url):
                 price = price_element.get_text(strip=True)
                 return {"product_name": product_name.text.strip(), "product_price": price}
 
-        return {"error": "Product is currently unavailable. Please try again later.", "price": price_element}
+        return {"error": "Product is currently unavailable. Please try again later.", "price": response.status_code}
 
     except requests.exceptions.RequestException as e:
         return {"error": f"Request Error: {str(e)}"}
@@ -58,7 +58,7 @@ def scrape_flipkart(url):
                 else:
                     return {"error": "Product price not found on the page.", "url": url}
 
-        return {"error": "Product is currently unavailable. Please try again later.", "name": product_name}
+        return {"error": "Product is currently unavailable. Please try again later.", "name": response.status_code}
 
     except requests.exceptions.RequestException as e:
         return {"error": f"Request Error: {str(e)}"}
@@ -86,7 +86,7 @@ def scrape_amazon(url):
                 price = price_element.get_text(strip=True)
                 return {"product_name": product_name.text.strip(), "product_price": pricel}  # Typo: should be "price"
 
-        return {"error": "Product is currently unavailable. Please try again later.", "price": price_element}
+        return {"error": "Product is currently unavailable. Please try again later.", "price": response.status_code}
 
     except requests.exceptions.RequestException as e:
         return {"error": f"Request Error: {str(e)}"}
