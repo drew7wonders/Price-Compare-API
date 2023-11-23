@@ -101,7 +101,7 @@ def handle_scraping():
     url_amaz = data.get('amazon_url', '')
     result_amaz = scrape_amazon(url_amaz)
 
-    ret = {"snapdeal": result_snap, "flipkart": result_flip, "amazon": result_amaz}
+    ret = {"snap": result_snap, "flip": result_flip, "amaz": result_amaz}
     return jsonify(ret)
 
 if __name__ == "__main__":
