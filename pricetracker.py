@@ -105,9 +105,9 @@ def handle_scraping():
     return jsonify(ret)
 
 if __name__ == "__main__":
-    # Use Gunicorn as the production server
-    bind_address = os.getenv('BIND', '0.0.0.0')
-    bind_port = int(os.getenv('PORT', 5000))
+    # # Use Gunicorn as the production server
+    # bind_address = os.getenv('BIND', '0.0.0.0')
+    # bind_port = int(os.getenv('PORT', 5000))
 
-    print(f"Starting server on {bind_address}:{bind_port}")
-    app.run(host=bind_address, port=bind_port, threaded=True)
+    # print(f"Starting server on {bind_address}:{bind_port}")
+    app.run()
