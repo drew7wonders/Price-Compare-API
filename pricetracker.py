@@ -40,12 +40,12 @@ def scrape_flipkart(url):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
             'Accept': 'text/html'
         }
-
+        ch = 100
         response = requests.get(url, headers=headers)
 
-        if response.status_code == 500:
+        if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
-
+            ch = 101
             product_name = soup.find('span', class_='B_NuCI')
             price_element = soup.find('div', class_='_30jeq3 _16Jk6d')
 
@@ -58,7 +58,7 @@ def scrape_flipkart(url):
                 else:
                     return {"error": "Product price not found on the page.", "url": url}
 
-        return {"error": "Product is currently unavailable. Please try again later.", "name": response.status_code}
+        return {"error": "Product is currently unavailable. Please try again later.", "name": response.status_code, "ch": ch}
 
     except requests.exceptions.RequestException as e:
         return {"error": f"Request Error: {str(e)}"}
