@@ -34,6 +34,7 @@ def scrape_snapdeal(url):
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
+    
 
 
 def scrape_flipkart(url):
@@ -62,6 +63,7 @@ def scrape_flipkart(url):
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
+    
 
 
 def scrape_amazon(url):
@@ -92,7 +94,8 @@ def scrape_amazon(url):
         return {"error": f"Error: {str(e)}"}
 
 
-@app.route('/api/scrape_snapdeal', methods=['POST'])
+
+@app.route('/scrape_snapdeal', methods=['POST'])
 def handle_snapdeal_scraping():
     data = request.get_json()
 
@@ -108,7 +111,6 @@ def handle_snapdeal_scraping():
 
     ret = {"snap": result_snap,"flip": result_flip,"amaz": result_amaz}
     return jsonify(ret)
-
 
 
 if __name__ == "__main__":
