@@ -7,8 +7,9 @@ import os
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})  # Update to allow all origins in development
 
+
 def scrape_snapdeal(url):
-try:
+    try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
             'Accept': 'text/html'
@@ -33,7 +34,6 @@ try:
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
-    
 
 
 def scrape_flipkart(url):
@@ -62,7 +62,6 @@ def scrape_flipkart(url):
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
-    
 
 
 def scrape_amazon(url):
@@ -92,6 +91,7 @@ def scrape_amazon(url):
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
 
+
 @app.route('/api/scrape_snapdeal', methods=['POST'])
 def handle_snapdeal_scraping():
     data = request.get_json()
@@ -100,6 +100,7 @@ def handle_snapdeal_scraping():
     result_snap = scrape_snapdeal(url_snap)
 
     return jsonify(result_snap)
+
 
 if __name__ == "__main__":
     # Use Gunicorn as the production server
