@@ -99,7 +99,16 @@ def handle_snapdeal_scraping():
     url_snap = data.get('snapdeal_url', '')
     result_snap = scrape_snapdeal(url_snap)
 
-    return jsonify(result_snap)
+    
+    url_flip = data.get('flipkart_url', '')
+    result_flip = scrape_flipkart(url_flip)
+
+    url_amaz = data.get('amazon_url', '')
+    result_amaz = scrape_amazon(url_amaz)
+
+    ret = {"snap": result_snap,"flip": result_flip,"amaz": result_amaz}
+    return jsonify(ret)
+
 
 
 if __name__ == "__main__":
