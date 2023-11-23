@@ -109,4 +109,4 @@ def handle_scraping():
     return jsonify(ret)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, port=5003, threaded=True)
