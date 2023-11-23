@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})  # Update to allow all origins in development
 
 def scrape_snapdeal(url):
-    try:
+try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
             'Accept': 'text/html'
@@ -21,6 +21,64 @@ def scrape_snapdeal(url):
 
             product_name = soup.find('h1', class_='pdp-e-i-head')
             price_element = soup.find('span', class_='payBlkBig')
+
+            if price_element:
+                price = price_element.get_text(strip=True)
+                return {"product_name": product_name.text.strip(), "product_price": price}
+
+        return {"error": "Product is currently unavailable. Please try again later."}
+
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Request Error: {str(e)}"}
+
+    except Exception as e:
+        return {"error": f"Error: {str(e)}"}
+    
+
+
+def scrape_flipkart(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
+            'Accept': 'text/html'
+        }
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            product_name = soup.find('span', class_='B_NuCI')
+            price_element = soup.find('div', class_='_30jeq3 _16Jk6d')
+
+            if price_element:
+                price = price_element.get_text(strip=True)
+                return {"product_name": product_name.text.strip(), "product_price": price}
+
+        return {"error": "Product is currently unavailable. Please try again later."}
+
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Request Error: {str(e)}"}
+
+    except Exception as e:
+        return {"error": f"Error: {str(e)}"}
+    
+
+
+def scrape_amazon(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
+            'Accept': 'text/html'
+        }
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            product_name = soup.find('span', class_='a-size-large product-title-word-break')
+            price_element = soup.find('span', class_='a-price-whole')
 
             if price_element:
                 price = price_element.get_text(strip=True)
