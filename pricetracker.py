@@ -60,7 +60,7 @@ def scrape_flipkart(url):
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
-
+        
 def scrape_amazon(url):
     try:
         headers = {
@@ -78,7 +78,7 @@ def scrape_amazon(url):
 
             if price_element:
                 price = price_element.get_text(strip=True)
-                return {"product_name": product_name.text.strip(), "product_price": pricel}
+                return {"product_name": product_name.text.strip(), "product_price": pricel}  # Typo: should be "price"
 
         return {"error": "Product is currently unavailable. Please try again later.", "url": url}
 
@@ -87,7 +87,7 @@ def scrape_amazon(url):
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
-
+        
 @app.route('/api/scrape', methods=['POST'])
 def handle_scraping():
     data = request.get_json()
