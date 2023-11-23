@@ -28,7 +28,7 @@ class Scraper:
                     price = price_element.get_text(strip=True)
                     return {"product_name": product_name.text.strip(), "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later."}
+            return {"error": "Product is currently unavailable. Please try again later.", "url":self.url}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
@@ -50,7 +50,7 @@ class Scraper:
                     price = price_element.get_text(strip=True)
                     return {"product_name": product_name.text.strip(), "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later."}
+            return {"error": "Product is currently unavailable. Please try again later.", "url":self.url}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
@@ -72,7 +72,7 @@ class Scraper:
                     price = price_element.get_text(strip=True)
                     return {"product_name": product_name.text.strip(), "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later."}
+            return {"error": "Product is currently unavailable. Please try again later.", "url":self.url}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
