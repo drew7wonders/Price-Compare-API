@@ -49,17 +49,23 @@ def scrape_flipkart(url):
             product_name = soup.find('span', class_='B_NuCI')
             price_element = soup.find('div', class_='_30jeq3 _16Jk6d')
 
-            if price_element:
-                price = price_element.get_text(strip=True)
-                return {"product_name": product_name.text.strip(), "product_price": price}
+            if product_name:
+                product_name_text = product_name.get_text(strip=True)
 
-        return {"error": "Product is currently unavailable. Please try again later.", "price": price_element}
+                if price_element:
+                    price = price_element.get_text(strip=True)
+                    return {"product_name": product_name_text, "product_price": price}
+                else:
+                    return {"error": "Product price not found on the page.", "url": url}
+
+        return {"error": "Product is currently unavailable. Please try again later.", "url": url}
 
     except requests.exceptions.RequestException as e:
         return {"error": f"Request Error: {str(e)}"}
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
+
         
 def scrape_amazon(url):
     try:
