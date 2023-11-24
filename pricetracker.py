@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+
 class Scraper:
     def __init__(self, url):
         self.url = url
@@ -14,28 +15,6 @@ class Scraper:
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
             'Accept': 'text/html'
         }
-
-    def scrape_snapdeal(self):
-        try:
-            response = requests.get(self.url, headers=self.headers)
-
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.content, 'html.parser')
-
-                product_name = soup.find('h1', class_='pdp-e-i-head')
-                price_element = soup.find('span', class_='payBlkBig')
-
-                if price_element:
-                    price = price_element.get_text(strip=True)
-                    return {"product_name": product_name.text.strip(), "product_price": price}
-
-            return {"error": "Product is currently unavailable. Please try again later.", "code": response.status_code, "name": product_name, "soup":soup.find('span', class_='a-price-whole')}
-
-        except requests.exceptions.RequestException as e:
-            return {"error": f"Request Error: {str(e)}"}
-
-        except Exception as e:
-            return {"error": f"Error: {str(e)}"}
 
     def scrape_flipkart(self):
         try:
@@ -45,13 +24,16 @@ class Scraper:
                 soup = BeautifulSoup(response.content, 'html.parser')
 
                 product_name = soup.find('span', class_='B_NuCI')
-                price_element = soup.find('div', class_='_30jeq3 _16Jk6d')
+                price_element = soup.find('div', class_='_1vC4OE _3qQ9m1')
 
-                if price_element:
+                if product_name and price_element:
+                    product_name_text = product_name.text.strip()
                     price = price_element.get_text(strip=True)
-                    return {"product_name": product_name.text.strip(), "product_price": price}
+                    return {"product_name": product_name_text, "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later.", "code": response.status_code, "name": product_name, "soup":soup.find('span', class_='a-price-whole')}
+                return {"error": "Product details not found on Flipkart. Please check the scraping code."}
+
+            return {"error": "Product is currently unavailable on Flipkart. Please try again later."}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
@@ -66,14 +48,17 @@ class Scraper:
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, 'html.parser')
 
-                product_name = soup.find('span', class_='a-size-large product-title-word-break')
+                product_name = soup.find('span', class_='a-size-large')
                 price_element = soup.find('span', class_='a-price-whole')
 
-                if price_element:
+                if product_name and price_element:
+                    product_name_text = product_name.text.strip()
                     price = price_element.get_text(strip=True)
-                    return {"product_name": product_name.text.strip(), "product_price": price}
+                    return {"product_name": product_name_text, "product_price": price}
 
-            return {"error": "Product is currently unavailable. Please try again later.", "code": response.status_code, "name": product_name, "soup":soup.find('span', class_='a-price-whole')}
+                return {"error": "Product details not found on Amazon. Please check the scraping code."}
+
+            return {"error": "Product is currently unavailable on Amazon. Please try again later."}
 
         except requests.exceptions.RequestException as e:
             return {"error": f"Request Error: {str(e)}"}
