@@ -2,21 +2,11 @@ from flask import Flask, request, jsonify
 from bs4 import BeautifulSoup
 import requests
 from flask_cors import CORS
-from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-
-class Scraper:
-    def __init__(self, url):
-        self.url = url
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
-            'Accept': 'text/html'
-        }
-
-    def scrape_snapdeal(url):
+def scrape_snapdeal(url):
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
@@ -42,82 +32,82 @@ class Scraper:
 
     except Exception as e:
         return {"error": f"Error: {str(e)}"}
+    
 
-    def scrape_flipkart(self):
-        try:
-            response = requests.get(self.url, headers=self.headers)
 
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.content, 'html.parser')
+def scrape_flipkart(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
+            'Accept': 'text/html'
+        }
 
-                product_name = soup.find('span', class_='B_NuCI')
-                price_element = soup.find('div', class_='_1vC4OE _3qQ9m1')
+        response = requests.get(url, headers=headers)
 
-                if product_name and price_element:
-                    product_name_text = product_name.text.strip()
-                    price = price_element.get_text(strip=True)
-                    return {"product_name": product_name_text, "product_price": price}
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
 
-                return {"error": "Product details not found on Flipkart. Please check the scraping code."}
+            product_name = soup.find('span', class_='B_NuCI')
+            price_element = soup.find('div', class_='_30jeq3 _16Jk6d')
 
-            return {"error": "Product is currently unavailable on Flipkart. Please try again later."}
+            if price_element:
+                price = price_element.get_text(strip=True)
+                return {"product_name": product_name.text.strip(), "product_price": price}
 
-        except requests.exceptions.RequestException as e:
-            return {"error": f"Request Error: {str(e)}"}
+        return {"error": "Product is currently unavailable. Please try again later."}
 
-        except Exception as e:
-            return {"error": f"Error: {str(e)}"}
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Request Error: {str(e)}"}
 
-    def scrape_amazon(self):
-        try:
-            response = requests.get(self.url, headers=self.headers)
+    except Exception as e:
+        return {"error": f"Error: {str(e)}"}
+    
 
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.content, 'html.parser')
 
-                product_name = soup.find('span', class_='a-size-large')
-                price_element = soup.find('span', class_='a-price-whole')
+def scrape_amazon(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
+            'Accept': 'text/html'
+        }
 
-                if product_name and price_element:
-                    product_name_text = product_name.text.strip()
-                    price = price_element.get_text(strip=True)
-                    return {"product_name": product_name_text, "product_price": price}
+        response = requests.get(url, headers=headers)
 
-                return {"error": "Product details not found on Amazon. Please check the scraping code."}
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
 
-            return {"error": "Product is currently unavailable on Amazon. Please try again later."}
+            product_name = soup.find('span', class_='a-size-large product-title-word-break')
+            price_element = soup.find('span', class_='a-price-whole')
 
-        except requests.exceptions.RequestException as e:
-            return {"error": f"Request Error: {str(e)}"}
+            if price_element:
+                price = price_element.get_text(strip=True)
+                return {"product_name": product_name.text.strip(), "product_price": price}
 
-        except Exception as e:
-            return {"error": f"Error: {str(e)}"}
+        return {"error": "Product is currently unavailable. Please try again later."}
 
-def scrape_with_timeout(scraper, timeout=30):
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        future_snap = executor.submit(scraper.scrape_snapdeal)
-        future_flip = executor.submit(scraper.scrape_flipkart)
-        future_amaz = executor.submit(scraper.scrape_amazon)
+    except requests.exceptions.RequestException as e:
+        return {"error": f"Request Error: {str(e)}"}
 
-        # Wait for all futures to complete
-        result_snap = future_snap.result(timeout=timeout)
-        result_flip = future_flip.result(timeout=timeout)
-        result_amaz = future_amaz.result(timeout=timeout)
+    except Exception as e:
+        return {"error": f"Error: {str(e)}"}
 
-        return result_snap, result_flip, result_amaz
+
 
 @app.route('/scrape', methods=['POST'])
-def handle_scraping():
+def handle_snapdeal_scraping():
     data = request.get_json()
 
     url_snap = data.get('snapdeal_url', '')
+    result_snap = scrape_snapdeal(url_snap)
+
+    
     url_flip = data.get('flipkart_url', '')
+    result_flip = scrape_flipkart(url_flip)
+
     url_amaz = data.get('amazon_url', '')
+    result_amaz = scrape_amazon(url_amaz)
 
-    scraper_snapdeal = Scraper(url_snap)
-    result_snap, result_flip, result_amaz = scrape_with_timeout(scraper_snapdeal)
-
-    ret = {"snap": result_snap, "flip": result_flip, "amaz": result_amaz}
+    ret = {"snap": result_snap,"flip": result_flip,"amaz": result_amaz}
     return jsonify(ret)
 
 if __name__ == "__main__":
